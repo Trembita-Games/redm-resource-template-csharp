@@ -1,4 +1,4 @@
-namespace TgResourceTemplateCSharp.Shared
+namespace RedmResourceTemplateCSharp.Shared
 {
 
     /// <summary>
@@ -13,7 +13,7 @@ namespace TgResourceTemplateCSharp.Shared
         /// <summary>
         /// Canonical resource name used in logs and validation output.
         /// </summary>
-        public const string ResourceName = "tg-resource-template-csharp";
+        public const string ResourceName = "redm-resource-template-csharp";
 
         /// <summary>
         /// Enables additional development logs when future resources need them.

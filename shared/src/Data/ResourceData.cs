@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace TgResourceTemplateCSharp.Shared.Data
+namespace RedmResourceTemplateCSharp.Shared.Data
 {
 
     /// <summary>

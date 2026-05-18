@@ -1,6 +1,6 @@
 using System;
 
-namespace TgResourceTemplateCSharp.Shared.Logging
+namespace RedmResourceTemplateCSharp.Shared.Logging
 {
     /// <summary>
     /// Shared log formatting helper.

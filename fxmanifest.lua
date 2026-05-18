@@ -1,4 +1,4 @@
--- Resource manifest for tg-resource-template-csharp.
+-- Resource manifest for redm-resource-template-csharp.
 --
 -- fxmanifest.lua is required by FXServer/RedM.
 -- It tells the server what game this resource targets and which compiled C# scripts to load.
@@ -27,15 +27,15 @@ version '0.1.0'
 -- This assembly references CitizenFX.Core.Client only.
 client_script {
     'client/CitizenFX.Core.Client.dll',
-    'client/tg-resource-template-csharp.client.net.dll'
+    'client/redm-resource-template-csharp.client.net.dll'
 }
 
 -- Server scripts run on the FXServer runtime.
 -- This assembly references CitizenFX.Core.Server only.
 server_script {
     'server/CitizenFX.Core.Server.dll',
-    'server/tg-resource-template-csharp.server.net.dll',
-    'server/tg-resource-template-csharp.shared.dll'
+    'server/redm-resource-template-csharp.server.net.dll',
+    'server/redm-resource-template-csharp.shared.dll'
 }
 
 -- Client runtime dependency assemblies are listed as files so clients receive the exact DLLs

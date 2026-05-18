@@ -1,8 +1,8 @@
 using CitizenFX.Core;
-using TgResourceTemplateCSharp.Shared.Data;
-using TgResourceTemplateCSharp.Shared.Logging;
+using RedmResourceTemplateCSharp.Shared.Data;
+using RedmResourceTemplateCSharp.Shared.Logging;
 
-namespace TgResourceTemplateCSharp.Client
+namespace RedmResourceTemplateCSharp.Client
 {
     public class ClientMain : BaseScript
     {

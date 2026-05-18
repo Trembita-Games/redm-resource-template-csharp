@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/client/">
+    <Project Path="client/redm-resource-template-csharp.client.csproj" />
+  </Folder>
+  <Folder Name="/server/">
+    <Project Path="server/redm-resource-template-csharp.server.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/redm-resource-template-csharp.shared.csproj" />
+  </Folder>
+</Solution>

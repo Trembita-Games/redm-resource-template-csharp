@@ -1,109 +1,169 @@
-# tg-resource-template-csharp
+# redm-resource-template-csharp
 
-Reusable RedM C# resource template for conservative CitizenFX Mono runtime usage.
+RedM C# resource template structured for CitizenFX runtime compatibility and deterministic packaging.
 
-## Architecture
+## Repository Structure
 
-The repository contains two runtime projects:
+```text
+redm-resource-template-csharp/
++-- client/
+|   +-- src/
+|   +-- redm-resource-template-csharp.client.csproj
++-- server/
+|   +-- src/
+|   +-- redm-resource-template-csharp.server.csproj
++-- shared/
+|   +-- src/
+|   +-- redm-resource-template-csharp.shared.csproj
++-- build.cmd
++-- build.sh
++-- fxmanifest.lua
++-- README.md
++-- redm-resource-template-csharp.slnx
+```
 
-- `client/tg-resource-template-csharp.client.csproj`
-- `server/tg-resource-template-csharp.server.csproj`
+- `client/` contains the RedM client runtime entry point. It targets `net452`, uses `CitizenFX.Sdk.Client/0.2.3`, and includes shared source files at compile time.
+- `server/` contains the FXServer runtime entry point. It targets `netstandard2.0`, references the shared project with `ProjectReference`, and uses `CitizenFX.Core.Server` version `1.0.26803`.
+- `shared/` contains common configuration, metadata, and logging helpers. It targets `netstandard2.0` as a standalone shared project.
+- `fxmanifest.lua` declares the RedM resource and loads the packaged client and server assemblies.
+- `build.cmd` and `build.sh` publish the projects and assemble the deployable `build/` package.
+- `redm-resource-template-csharp.slnx` references the client, server, and shared projects.
 
-Shared code lives under `shared/src` and is compiled directly into both runtime assemblies:
+## Runtime Architecture
 
-- `shared/src/ResourceConfiguration.cs`
-- `shared/src/Logging/LogHelper.cs`
-- `shared/src/Data/ResourceData.cs`
+The client and server are built as separate CitizenFX script assemblies:
 
-There is no shared project, no shared DLL, and no dependency injection container. This keeps assembly loading simple for CitizenFX and avoids runtime dependencies that are not explicitly needed.
+- `redm-resource-template-csharp.client.net.dll`
+- `redm-resource-template-csharp.server.net.dll`
+
+The `.net.dll` suffix is intentional. CitizenFX uses that naming convention to identify managed C# script assemblies loaded by the resource manifest.
+
+### Client
+
+The client project targets `net452` because the CitizenFX client runtime is constrained by the client-side Mono/.NET Framework compatibility surface. The client project uses `CitizenFX.Sdk.Client/0.2.3` and emits:
+
+```text
+client/redm-resource-template-csharp.client.net.dll
+```
+
+The client does not reference or load the shared runtime assembly. Instead, it compiles shared source files directly:
+
+```xml
+<Compile Include="../shared/src/**/*.cs" />
+```
+
+This keeps the client runtime assembly self-contained for shared template code and avoids introducing an additional shared DLL into the client loading path.
+
+### Server
+
+The server project targets `netstandard2.0` and uses `CitizenFX.Core.Server` version `1.0.26803`. It emits:
+
+```text
+server/redm-resource-template-csharp.server.net.dll
+```
+
+The server references the shared project:
+
+```xml
+<ProjectReference Include="../shared/redm-resource-template-csharp.shared.csproj" />
+```
+
+The server runtime can safely use this project reference because the server package explicitly includes the shared assembly beside the server assembly:
+
+```text
+server/redm-resource-template-csharp.shared.dll
+```
+
+### Shared
+
+The shared project targets `netstandard2.0` and emits:
+
+```text
+redm-resource-template-csharp.shared.dll
+```
+
+It provides shared configuration, metadata, and logging helpers. Server code consumes it as a normal referenced assembly. Client code consumes the same source files through compile-time inclusion instead of runtime assembly loading.
+
+## Framework Targets
+
+| Module | Target framework | Runtime dependency model |
+| --- | --- | --- |
+| Client | `net452` | Shared source compiled directly into the client assembly |
+| Server | `netstandard2.0` | `ProjectReference` to the shared project |
+| Shared | `netstandard2.0` | Standalone shared assembly used by the server |
 
 ## Build Workflow
 
-Use the platform script from the repository root:
+Run builds from the repository root.
+
+### Windows
 
 ```bat
+dotnet restore
 build.cmd
 ```
 
+### Linux
+
 ```sh
+dotnet restore
+chmod +x build.sh
 ./build.sh
 ```
 
-The scripts publish both projects in `Release`:
+The build scripts publish each project in `Release`, clear the previous `build/` directory, copy `fxmanifest.lua` and `README.md`, and copy the exact runtime DLLs required by the resource.
 
-```sh
-dotnet publish ./client/tg-resource-template-csharp.client.csproj -c Release
-dotnet publish ./server/tg-resource-template-csharp.server.csproj -c Release
+## Build Output
+
+The deployable package is written to `build/`:
+
+```text
+build/
++-- client/
+|   +-- CitizenFX.Core.Client.dll
+|   +-- redm-resource-template-csharp.client.net.dll
++-- server/
+|   +-- CitizenFX.Core.Server.dll
+|   +-- redm-resource-template-csharp.server.net.dll
+|   +-- redm-resource-template-csharp.shared.dll
++-- fxmanifest.lua
++-- README.md
 ```
 
-## Publish Workflow
-
-Use `dotnet publish`, not only `dotnet build`.
-
-The manifest loads published assemblies from:
-
-- `client/bin/Release/netstandard2.0/publish/*.net.dll`
-- `server/bin/Release/netstandard2.0/publish/*.net.dll`
-
-Publishing is required because it creates the final runtime folder layout with the compiled `.net.dll` assemblies and required dependency files. A normal build output is not the deployment contract for this template.
+`build/` is the deployment contract for this repository. Do not deploy intermediate `bin/` or `obj/` outputs as the resource package.
 
 ## Deployment
 
-Place this repository folder in the server `resources` directory using the exact resource folder name:
+Build the resource first, then deploy the contents of `build/` to a RedM server resource folder named:
 
 ```text
-tg-resource-template-csharp
+redm-resource-template-csharp
 ```
 
-Build or publish the resource before starting FXServer. Then add the resource to `server.cfg`:
+Enable the resource in `server.cfg`:
 
 ```text
-ensure tg-resource-template-csharp
+ensure redm-resource-template-csharp
 ```
 
-On Linux, keep path casing exactly as shown. Linux filesystems are case-sensitive, so `Client`, `client`, `Release`, and `release` are different paths.
+Keep path casing unchanged on Linux systems. Linux filesystems are case-sensitive, and the manifest paths must match the packaged folder and file names exactly.
 
-## Runtime Expectations
+## Logging
 
-When the resource starts, the client logs:
+Client and server initialization are separate runtime paths. Each runtime writes its own startup messages through `CitizenFX.Core.Debug.WriteLine`.
+
+Shared logging helpers centralize log formatting and use the configured resource name:
 
 ```text
-[tg-resource-template-csharp] [INFO] Client runtime initialized.
+[redm-resource-template-csharp] [LEVEL] Message
 ```
 
-The server logs:
+The helper code is compiled into the client assembly and included as a shared assembly for the server.
 
-```text
-[tg-resource-template-csharp] [INFO] Server runtime initialized.
-```
+## Compatibility Goals
 
-Runtime logging is performed only inside the client and server projects through `CitizenFX.Core.Debug.WriteLine`. Shared helpers only return formatted strings.
-
-## Why `.net.dll` Is Required
-
-CitizenFX C# resources expect managed script assemblies to use the `.net.dll` naming convention. Both projects set:
-
-```xml
-<TargetName>$(AssemblyName).net</TargetName>
-```
-
-This produces:
-
-- `tg-resource-template-csharp.client.net.dll`
-- `tg-resource-template-csharp.server.net.dll`
-
-The `fxmanifest.lua` script entries intentionally load only `*.net.dll` files.
-
-## Linux Compatibility Notes
-
-The build workflow uses relative paths and works on Linux FXServer environments with the .NET SDK installed. The shell script uses LF line endings and does not rely on Windows-only shell behavior.
-
-Do not rename publish folders or change casing in `fxmanifest.lua`. Keep generated outputs under:
-
-- `client/bin/Release/netstandard2.0/publish`
-- `server/bin/Release/netstandard2.0/publish`
-
-## Runtime Compatibility Notes
-
-This template targets `netstandard2.0` and C# 7.3 to remain compatible with the CitizenFX Mono runtime. Avoid introducing modern runtime features, nullable reference types, records, implicit usings, LINQ-heavy shared abstractions, or shared runtime DLLs unless the target runtime requirements are deliberately changed.
-Reference RedM C# resource template for CitizenFX/FXServer runtime environments.
+- Preserve CitizenFX client runtime compatibility by targeting `net452` and avoiding a client-side shared runtime DLL.
+- Preserve FXServer compatibility by targeting `netstandard2.0` on the server.
+- Keep packaging deterministic with explicit copy paths in `build.cmd` and `build.sh`.
+- Support both Windows and Linux build environments.
+- Keep client and server assemblies split by runtime responsibility.
