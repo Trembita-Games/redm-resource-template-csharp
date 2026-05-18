@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/client/">
+    <Project Path="client/tg-resource-template-csharp.client.csproj" />
+  </Folder>
+  <Folder Name="/server/">
+    <Project Path="server/tg-resource-template-csharp.server.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="shared/tg-resource-template-csharp.shared.csproj" />
+  </Folder>
+</Solution>

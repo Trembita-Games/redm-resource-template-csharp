@@ -1,0 +1,19 @@
+# Build artifacts
+build/
+
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+
+# VSCode
+.vscode/
+
+# Rider / IntelliJ
+.idea/
+
+# NuGet
+*.nupkg
+packages/

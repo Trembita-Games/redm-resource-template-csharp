@@ -1,0 +1,27 @@
+<Project Sdk="CitizenFX.Sdk.Client/0.2.3">
+  <PropertyGroup>
+    <TargetFramework>net452</TargetFramework>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>TgResourceTemplateCSharp.Client</RootNamespace>
+    <AssemblyName>tg-resource-template-csharp.client</AssemblyName>
+    <TargetName>$(AssemblyName).net</TargetName>
+    <DebugType>embedded</DebugType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DisableImplicitFrameworkReferences>false</DisableImplicitFrameworkReferences>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="../shared/src/**/*.cs" />
+  </ItemGroup>
+
+  <Target Name="RemoveCitizenFxFrameworkReference" BeforeTargets="ProcessFrameworkReferences">
+    <ItemGroup>
+      <FrameworkReference Remove="CitizenFX.Framework.Client" />
+    </ItemGroup>
+  </Target>
+</Project>

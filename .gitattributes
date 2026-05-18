@@ -1,0 +1,39 @@
+# Default text behavior
+* text=auto eol=lf
+
+# Lua
+*.lua text eol=lf
+
+# C#
+*.cs text eol=lf
+*.csproj text eol=lf
+
+# Solution files
+*.slnx text eol=lf
+
+# Markdown
+*.md text eol=lf
+
+# JSON/XML/YAML
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Shell scripts
+*.sh text eol=lf
+
+# Windows scripts
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.dll binary
+*.pdb binary
+*.7z binary
+*.zip binary

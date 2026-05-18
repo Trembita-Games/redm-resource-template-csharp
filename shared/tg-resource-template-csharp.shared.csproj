@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>TgResourceTemplateCSharp.Shared</RootNamespace>
+    <AssemblyName>tg-resource-template-csharp.shared</AssemblyName>
+    <TargetName>$(AssemblyName)</TargetName>
+    <DebugType>embedded</DebugType>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+</Project>
